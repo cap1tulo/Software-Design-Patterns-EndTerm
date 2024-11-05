@@ -25,11 +25,18 @@ public class ExpenseFacade {
 
     public String generateReport(String period) {
         ReportStrategy reportStrategy;
+
         if ("Monthly".equalsIgnoreCase(period)) {
-            reportStrategy = new MonthlyReportStrategy();
+            // Pass the budgets from ExpenseModel to MonthlyReportStrategy
+            reportStrategy = new MonthlyReportStrategy(
+                    model.getFoodBudget(),
+                    model.getTransportBudget(),
+                    model.getPersonalBudget()
+            );
         } else {
             reportStrategy = new CategoryReportStrategy();
         }
+
         return reportStrategy.generateReport(model.getAllExpenses());
     }
 }

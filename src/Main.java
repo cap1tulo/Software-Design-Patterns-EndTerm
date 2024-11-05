@@ -1,7 +1,7 @@
 import model.ExpenseModel;
 import view.ExpenseView;
 import controller.ExpenseController;
-import model.ExpenseFacade;
+import model.MonthlyReportStrategy;
 
 import java.util.Scanner;
 
@@ -9,7 +9,6 @@ public class Main {
     public static void main(String[] args) {
         ExpenseModel model = new ExpenseModel();
         ExpenseView view = new ExpenseView();
-        ExpenseFacade facade = new ExpenseFacade(model, view);
         ExpenseController controller = new ExpenseController(model, view);
 
         Scanner scanner = new Scanner(System.in);
@@ -35,7 +34,7 @@ public class Main {
                     System.out.print("Enter budget amount: ");
                     double budgetAmount = scanner.nextDouble();
                     scanner.nextLine();
-                    facade.setBudget(budgetCategory, budgetAmount);
+                    controller.setBudget(budgetCategory, budgetAmount);
                     break;
 
                 case 2:
@@ -46,7 +45,7 @@ public class Main {
                     scanner.nextLine();  // Consume newline
                     System.out.print("Enter description: ");
                     String description = scanner.nextLine();
-                    facade.addExpense(expenseCategory, expenseAmount, description);
+                    controller.addExpense(expenseCategory, expenseAmount, description);
                     break;
 
                 case 3:
@@ -63,7 +62,13 @@ public class Main {
 
                 case 5:
                     System.out.println("\nGenerating Monthly Report...");
-                    System.out.println(facade.generateReport("Monthly"));
+                    MonthlyReportStrategy monthlyReportStrategy = new MonthlyReportStrategy(
+                            model.getFoodBudget(),
+                            model.getTransportBudget(),
+                            model.getPersonalBudget()
+                    );
+                    String report = monthlyReportStrategy.generateReport(model.getAllExpenses());
+                    System.out.println(report);
                     break;
 
                 case 6:
@@ -80,5 +85,3 @@ public class Main {
         scanner.close();
     }
 }
-
-
