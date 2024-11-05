@@ -34,7 +34,7 @@ public class ExpenseFacade {
         System.out.println("Personal Budget: $" + model.getPersonalBudget());
     }
 
-    // Revised method to generate a detailed monthly budget report with feedback
+    // Updated method to generate a detailed monthly budget report with feedback
     public String generateMonthlyBudgetReport() {
         StringBuilder report = new StringBuilder("Monthly Budget Report:\n");
 
@@ -69,5 +69,10 @@ public class ExpenseFacade {
         }
 
         return report.toString();
+    }
+
+    // Method to generate a report based on a custom strategy
+    public String generateReport(ReportStrategy strategy) {
+        return strategy.generateReport(model.getMonthlyExpensesGroup().getExpenses());
     }
 }
