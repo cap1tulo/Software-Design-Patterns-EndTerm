@@ -1,6 +1,6 @@
 package model;
 
-public class Expense {
+public class Expense implements ExpenseComponent {
     private String category;
     private double amount;
     private String description;
@@ -11,7 +11,21 @@ public class Expense {
         this.description = description;
     }
 
-    public String getCategory() { return category; }
-    public double getAmount() { return amount; }
-    public String getDescription() { return description; }
+    public String getCategory() {
+        return category;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public double getAmount() {
+        return amount;
+    }
+
+    @Override
+    public void display() {
+        System.out.println("Expense: " + description + " | Category: " + category + " | Amount: $" + amount);
+    }
 }

@@ -1,21 +1,11 @@
 package view;
 
-import model.Expense;
-import java.util.List;
-
 public class ExpenseView {
-
-    public void displayExpenses(List<Expense> expenses) {
-        for (Expense expense : expenses) {
-            System.out.println("Category: " + expense.getCategory() +
-                    ", Amount: " + expense.getAmount() +
-                    ", Description: " + expense.getDescription());
-        }
+    public void displayBudgetUpdate(String category, double amount) {
+        System.out.println("Budget for " + category + " set to $" + amount);
     }
 
-    public void displayBudgets(double foodBudget, double transportBudget, double personalBudget) {
-        System.out.println("Food Budget: " + foodBudget);
-        System.out.println("Transport Budget: " + transportBudget);
-        System.out.println("Personal Budget: " + personalBudget);
+    public void displayExpenseAdded(String category, double amount, String description) {
+        System.out.println("Added expense: " + description + " | Category: " + category + " | Amount: $" + amount);
     }
 }

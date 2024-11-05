@@ -4,27 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExpenseModel {
-    private List<Expense> expenses = new ArrayList<>();
+    private ExpenseGroup monthlyExpenses;
+    private List<Observer> observers = new ArrayList<>();
     private double foodBudget;
     private double transportBudget;
     private double personalBudget;
 
+    public ExpenseModel() {
+        this.monthlyExpenses = new ExpenseGroup("Monthly Expenses");
+    }
+
     public void addExpense(Expense expense) {
-        expenses.add(expense);
-    }
-
-    public List<Expense> getAllExpenses() {
-        return expenses;
-    }
-
-    public List<Expense> getExpensesByCategory(String category) {
-        List<Expense> categorizedExpenses = new ArrayList<>();
-        for (Expense expense : expenses) {
-            if (expense.getCategory().equalsIgnoreCase(category)) {
-                categorizedExpenses.add(expense);
-            }
-        }
-        return categorizedExpenses;
+        monthlyExpenses.addExpense(expense);
+        notifyObservers(expense);
     }
 
     public void setBudget(String category, double amount) {
@@ -35,7 +27,37 @@ public class ExpenseModel {
         }
     }
 
-    public double getFoodBudget() { return foodBudget; }
-    public double getTransportBudget() { return transportBudget; }
-    public double getPersonalBudget() { return personalBudget; }
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    private void notifyObservers(Expense expense) {
+        double budget = switch (expense.getCategory()) {
+            case "food" -> foodBudget;
+            case "transport" -> transportBudget;
+            case "personal" -> personalBudget;
+            default -> 0;
+        };
+        double currentSpending = monthlyExpenses.getAmount();
+
+        for (Observer observer : observers) {
+            observer.update(expense.getCategory(), currentSpending, budget);
+        }
+    }
+
+    public ExpenseGroup getMonthlyExpensesGroup() {
+        return monthlyExpenses;
+    }
+
+    public double getFoodBudget() {
+        return foodBudget;
+    }
+
+    public double getTransportBudget() {
+        return transportBudget;
+    }
+
+    public double getPersonalBudget() {
+        return personalBudget;
+    }
 }

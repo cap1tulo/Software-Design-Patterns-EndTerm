@@ -1,7 +1,7 @@
 import model.ExpenseModel;
 import view.ExpenseView;
 import controller.ExpenseController;
-import model.MonthlyReportStrategy;
+import model.BudgetAlert;
 
 import java.util.Scanner;
 
@@ -11,6 +11,10 @@ public class Main {
         ExpenseView view = new ExpenseView();
         ExpenseController controller = new ExpenseController(model, view);
 
+        // Add BudgetAlert as an observer to ExpenseModel
+        BudgetAlert budgetAlert = new BudgetAlert();
+        model.addObserver(budgetAlert);
+
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
 
@@ -18,28 +22,28 @@ public class Main {
             System.out.println("\n--- Expense Tracking System ---");
             System.out.println("1. Set Budget");
             System.out.println("2. Add Expense");
-            System.out.println("3. Show Expenses by Category");
-            System.out.println("4. Show All Budgets");
-            System.out.println("5. Generate Monthly Report");
-            System.out.println("6. Exit");
+            System.out.println("3. Show Monthly Expenses");
+            System.out.println("4. Show Budget");
+            System.out.println("5. Report for the Month");
+            System.out.println("6. Category-Based Report");
+            System.out.println("7. Exit");
             System.out.print("Choose an option: ");
 
             int choice = scanner.nextInt();
-            scanner.nextLine();  // Consume newline left-over
+            scanner.nextLine();  // Consume newline
 
             switch (choice) {
                 case 1:
                     System.out.print("Enter category (food/transport/personal): ");
-                    String budgetCategory = scanner.nextLine().toLowerCase();
+                    String budgetCategory = scanner.nextLine();
                     System.out.print("Enter budget amount: ");
                     double budgetAmount = scanner.nextDouble();
-                    scanner.nextLine();
                     controller.setBudget(budgetCategory, budgetAmount);
                     break;
 
                 case 2:
                     System.out.print("Enter category (food/transport/personal): ");
-                    String expenseCategory = scanner.nextLine().toLowerCase();
+                    String expenseCategory = scanner.nextLine();
                     System.out.print("Enter expense amount: ");
                     double expenseAmount = scanner.nextDouble();
                     scanner.nextLine();  // Consume newline
@@ -49,29 +53,22 @@ public class Main {
                     break;
 
                 case 3:
-                    System.out.print("Enter category to view (food/transport/personal): ");
-                    String viewCategory = scanner.nextLine().toLowerCase();
-                    System.out.println("\n--- " + viewCategory.substring(0, 1).toUpperCase() + viewCategory.substring(1) + " Expenses ---");
-                    controller.showExpensesByCategory(viewCategory);
+                    controller.displayMonthlyExpenses();
                     break;
 
                 case 4:
-                    System.out.println("\n--- Budgets ---");
-                    view.displayBudgets(model.getFoodBudget(), model.getTransportBudget(), model.getPersonalBudget());
+                    controller.displayAllBudgets();
                     break;
 
                 case 5:
-                    System.out.println("\nGenerating Monthly Report...");
-                    MonthlyReportStrategy monthlyReportStrategy = new MonthlyReportStrategy(
-                            model.getFoodBudget(),
-                            model.getTransportBudget(),
-                            model.getPersonalBudget()
-                    );
-                    String report = monthlyReportStrategy.generateReport(model.getAllExpenses());
-                    System.out.println(report);
+                    System.out.println(controller.generateMonthlyBudgetReport());
                     break;
 
                 case 6:
+                    System.out.println(controller.generateCategoryReport());
+                    break;
+
+                case 7:
                     System.out.println("Exiting the system. Goodbye!");
                     running = false;
                     break;
