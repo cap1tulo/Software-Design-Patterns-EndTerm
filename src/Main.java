@@ -27,7 +27,7 @@ public class Main {
             System.out.println("5. Report for the Month");
             System.out.println("6. Category-Based Report");
             System.out.println("7. Exit");
-            System.out.print("Choose an option: ");
+            System.out.print("\nChoose an option: ");
 
             int choice = scanner.nextInt();
             scanner.nextLine();  // Consume newline

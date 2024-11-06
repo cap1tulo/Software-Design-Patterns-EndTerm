@@ -1,6 +1,7 @@
 package model;
 
 import view.ExpenseView;
+import java.util.List;
 
 public class ExpenseFacade {
     private ExpenseModel model;
@@ -34,44 +35,26 @@ public class ExpenseFacade {
         System.out.println("Personal Budget: $" + model.getPersonalBudget());
     }
 
-    // Updated method to generate a detailed monthly budget report with feedback
+    // Updated method to generate a structured monthly report with budget feedback
     public String generateMonthlyBudgetReport() {
-        StringBuilder report = new StringBuilder("Monthly Budget Report:\n");
+        // Use ReportBuilder to create a structured report of expenses for the current month
+        ReportBuilder reportBuilder = new ReportBuilder(model.getMonthlyExpensesGroup().getExpenses());
+        reportBuilder.setPeriod("Current Month");
+        String expenseListReport = reportBuilder.build();
 
-        // Food Category
-        double foodBudget = model.getFoodBudget();
-        double foodSpending = model.getMonthlyExpensesGroup().getAmountByCategory("food");
-        report.append("\nFood:\n - Budget: $").append(foodBudget).append("\n - Spent: $").append(foodSpending);
-        if (foodSpending > foodBudget) {
-            report.append("\n -> You spent more than planned in the Food category. Consider reducing your expenses.");
-        } else {
-            report.append("\n -> Good job! You are within your budget for Food.");
-        }
+        // Use MonthlyReportStrategy to analyze and generate feedback on budget vs. spending
+        MonthlyReportStrategy strategy = new MonthlyReportStrategy(
+                model.getFoodBudget(),
+                model.getTransportBudget(),
+                model.getPersonalBudget()
+        );
+        String budgetFeedbackReport = strategy.generateReport(model.getMonthlyExpensesGroup().getExpenses());
 
-        // Transport Category
-        double transportBudget = model.getTransportBudget();
-        double transportSpending = model.getMonthlyExpensesGroup().getAmountByCategory("transport");
-        report.append("\n\nTransport:\n - Budget: $").append(transportBudget).append("\n - Spent: $").append(transportSpending);
-        if (transportSpending > transportBudget) {
-            report.append("\n -> You spent more than planned in the Transport category. Try to save on transportation.");
-        } else {
-            report.append("\n -> Good job! You are within your budget for Transport.");
-        }
-
-        // Personal Category
-        double personalBudget = model.getPersonalBudget();
-        double personalSpending = model.getMonthlyExpensesGroup().getAmountByCategory("personal");
-        report.append("\n\nPersonal:\n - Budget: $").append(personalBudget).append("\n - Spent: $").append(personalSpending);
-        if (personalSpending > personalBudget) {
-            report.append("\n -> You spent more than planned in the Personal category. Consider spending less.");
-        } else {
-            report.append("\n -> Great! You are within your budget for Personal expenses.");
-        }
-
-        return report.toString();
+        // Combine the expense list report and the budget feedback
+        return expenseListReport + "\n\n" + budgetFeedbackReport;
     }
 
-    // Method to generate a report based on a custom strategy
+    // Method to generate a report based on a custom strategy, used by the Category-Based Report
     public String generateReport(ReportStrategy strategy) {
         return strategy.generateReport(model.getMonthlyExpensesGroup().getExpenses());
     }
